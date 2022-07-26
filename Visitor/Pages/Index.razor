@@ -1,0 +1,23 @@
+﻿@page "/"
+@inject NavigationManager NavManager
+
+<h1>Visitor</h1>
+
+Welcome to the visitor sign in app.
+
+<button class="btn btn-primary" @onclick="SignInScreen">Sign In</button>
+<button class="btn btn-primary" @onclick="SignOutScreen">Sign Out</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void SignInScreen()
+    {
+        NavManager.NavigateTo("/signIn");
+    }
+
+    private void SignOutScreen()
+    {
+        NavManager.NavigateTo("/signOut");
+    }
+}

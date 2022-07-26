@@ -1,0 +1,76 @@
+﻿@page "/signOut"
+@using Visitor.Data
+@using Visitor.Models
+@inject DatabaseHandler DbHandler
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+@using System.Net
+
+<h3>Sign Out</h3>
+
+<div class="container">
+    <div class="row bg-light">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>DateTime In</th>
+                    <th>DateTime Out</th>
+                    <th>Sign Out</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Visitors.Any())
+                {
+                    @foreach (var visitor in Visitors)
+                    {
+                        <tr>
+                            <td>@visitor.Name</td>
+                            <td>@visitor.Company</td>
+                            <td>@visitor.Datetime_In</td>
+                            <td>@visitor.Datetime_Out</td>
+                            <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor.Id))">Sign Out</button></td>
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@code {
+    List<VisitorModel> Visitors = new List<VisitorModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshProducts();
+    }
+    private async Task RefreshProducts()
+    {
+        string ip = httpContextAccessor.HttpContext.Connection?.RemoteIpAddress.ToString();
+        if (ip == "::1")
+        {
+            ip =
+            Dns.GetHostEntry(Dns.GetHostName()).AddressList[2].ToString();
+        }
+
+        Visitors = await DbHandler.GetVisitorsForStore(ip);
+    }
+
+    private async Task SignOutVisitor(int id)
+    {
+        DbHandler.UpdateVisitor(id);
+        await RefreshProducts();
+    }
+
+
+
+}
