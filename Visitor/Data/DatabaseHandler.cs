@@ -45,10 +45,15 @@ namespace Visitor.Data
             DapperCon.Open();
         }
 
-        public async void AddVisitor(VisitorModel visitor)
-        {
-            var sql = @"INSERT INTO VISITORS (NAME,COMPANY,DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES ('" + visitor.Name + "','" + visitor.Company + "','" + DateTime.Now.ToString("yyyyMMddHHmmss") + "',null,'" + visitor.Ip_Address + "');";
-            await DapperCon.ExecuteAsync(sql);
+        public async Task<bool> AddVisitor(VisitorModel visitor) {
+            var parameters = new { FirstName = visitor.Name, Company = visitor.Company, SignIn = DateTime.Now.ToString("yyyyMMddHHmmss"), IP=visitor.Ip_Address };
+            var sql = @"INSERT INTO VISITORS (NAME,COMPANY,DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES (@FirstName,@Company,@SignIn,null,@IP);";
+            try {
+                await DapperCon.ExecuteAsync(sql, parameters);
+                return true;
+            } catch  {
+                throw;
+            }
         }
 
         public async void UpdateVisitor(int id)

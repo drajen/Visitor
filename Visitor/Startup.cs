@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Visitor.Data;
+using Visitor.Services;
 
 namespace Visitor
 {
@@ -63,6 +64,7 @@ namespace Visitor
                     services.AddScoped<IUnitOfWork, UnitOfWork>();*/
             }
             services.AddSingleton<DatabaseHandler>();
+            services.AddScoped<IIpTools, IpTools>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

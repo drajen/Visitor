@@ -1,13 +1,19 @@
 ﻿@page "/signIn"
+@inject DatabaseHandler DbHandler
+@inject NavigationManager NavManager
+@inject IIpTools iptools
+
+
+@using System.Net
+@using System.Net.Sockets
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Hosting
+
 @using Visitor.Data
 @using Visitor.Models
-@inject DatabaseHandler DbHandler
-@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor httpContextAccessor
-@using System.Net
+@using Visitor.Services
 
 <h3>Sign In</h3>
-
 
 <div class="row m-5">
     <div class="col-5 bg-light m-2 justify-content-start">
@@ -22,29 +28,20 @@
                 <input type="text" id="company" class="form-control" @bind="@NewVisitor.Company" />
             </div>
             <div class="text-center p-3 mb-3">
-                <button class="btn btn-info" @onclick="AddNewProduct"> Add Visitor</button>
+                <button class="btn btn-info" @onclick="AddNewVisitor"> Add Visitor</button>
             </div>
         </EditForm>
     </div>
 </div>
 
-
 @code {
     public VisitorModel NewVisitor { get; set; } = new VisitorModel();
-    private async Task AddNewProduct()
-    {
-        string ip = httpContextAccessor.HttpContext.Connection?.RemoteIpAddress.ToString();
-        if (ip == "::1")
-        {
-            ip =
-            Dns.GetHostEntry(Dns.GetHostName()).AddressList[2].ToString();
-        }
+    private async Task AddNewVisitor() {
 
-        NewVisitor.Ip_Address = ip;
+        NewVisitor.Ip_Address = iptools.GetIP();
 
-        DbHandler.AddVisitor(NewVisitor);
-
+        bool result = await DbHandler.AddVisitor(NewVisitor);
+        if(result)
+            NavManager.NavigateTo("/signOut");
     }
-
-
 }

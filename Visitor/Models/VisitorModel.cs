@@ -15,5 +15,9 @@ namespace Visitor.Models
         public DateTime Datetime_In { get; set; }
         public DateTime? Datetime_Out { get; set; }
         public string Ip_Address { get; set; }
+
+        public bool IsSignedIn { get {
+                return !Datetime_Out.HasValue;
+            } }
     }
 }
