@@ -1,6 +1,7 @@
 ﻿@page "/signOut"
 @inject DatabaseHandler DbHandler
 @inject IIpTools iptools
+@inject IJSRuntime JSRuntime
 
 @using System.Net
 @using System.Net.Sockets
@@ -31,7 +32,7 @@
                             <td>@visitor.Company</td>
                             <td>@visitor.Datetime_In</td>
                             @if (visitor.IsSignedIn) {
-                                <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor.Id))">Sign Out</button></td>
+                                <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor))">Sign Out</button></td>
                             } else {
                                  <td>@visitor.Datetime_Out</td>
                             }
@@ -56,13 +57,16 @@
     }
     private async Task RefreshVisitors()
     {
-        string ip = iptools.GetIP();
-        Visitors = await DbHandler.GetVisitorsForStore(ip);
+        int? branchNumber = iptools.GetBranchId();
+        if (branchNumber != null)
+        Visitors = await DbHandler.GetVisitorsForStore(branchNumber.Value);
     }
 
-    private async Task SignOutVisitor(int id)
-    {
-        DbHandler.UpdateVisitor(id);
+    private async Task SignOutVisitor(VisitorModel visitor) {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.Name}'?"))
+            return;
+
+        await DbHandler.UpdateVisitor(visitor.Id);
         await RefreshVisitors();
     }
 

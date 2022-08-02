@@ -26,5 +26,20 @@ namespace Visitor.Services {
             }
             return ip;
         }
+
+        public int? GetBranchId() {
+            var ip = _httpContextAccessor.HttpContext.Connection?.RemoteIpAddress;
+            if (_hostEnvironment.IsDevelopment())
+                ip = IPAddress.Parse("192.2.85.100");
+            
+            if (ip == null)
+                return null;
+
+            byte[] bytes = ip.GetAddressBytes();
+            if (bytes.Length != 4)
+                return null;
+
+            return (bytes[1] * 100) + bytes[2];
+        }
     }
 }

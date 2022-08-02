@@ -56,15 +56,23 @@ namespace Visitor.Data
             }
         }
 
-        public async void UpdateVisitor(int id)
+        public async Task<bool> UpdateVisitor(int id)
         {
-            var sql = @"UPDATE VISITORS SET DATETIME_OUT= '" + DateTime.Now.ToString("yyyyMMddHHmmss") + "' where id = " + id + ";";
-            await DapperCon.ExecuteAsync(sql);
+            var parameters = new { id = id, signOut = DateTime.Now.ToString("yyyyMMddHHmmss") };
+            var sql = @"UPDATE VISITORS SET DATETIME_OUT=@signOut where id = @id;";
+            try {
+                await DapperCon.ExecuteAsync(sql, parameters);
+                return true;
+            } catch {
+                throw;
+            }
+            
         }
 
-        public async Task<List<VisitorModel>> GetVisitorsForStore(string ipAddress)
+        public async Task<List<VisitorModel>> GetVisitorsForStore(int branchNumber)
         {
-            var sql = @"select * from VISITORS where IP_ADDRESS = '" + ipAddress + "';";
+            var parameters = new { branchNumber = branchNumber };
+            var sql = @"select * from VISITORS where BRANCH_NUMBER = @branchNumber;";
             IEnumerable<VisitorModel> VisitorList = await DapperCon.QueryAsync<VisitorModel>(sql);
             List<VisitorModel> StoreVisitorList = VisitorList.ToList();
             return StoreVisitorList;
