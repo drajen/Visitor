@@ -68,8 +68,11 @@ namespace Visitor.Data
                 new VisitorEntity()
                 {
                     Id = 1,
-                    Name = "Nathan",
+                    FirstName = "Dharrish",
+                    LastName = "Rajendram",
                     Company = "M&Co",
+                    ContactNumber = "07555975986",
+                    Reason = "Shopping",
                     Datetime_In = DateTime.Now,
                     Datetime_Out = null,
                     Ip_Address = "1.1.1.1"

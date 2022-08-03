@@ -47,8 +47,9 @@ namespace Visitor.Data
 
         public async void AddVisitor(VisitorModel visitor)
         {
-            var sql = @"INSERT INTO VISITORS (NAME,COMPANY,DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES ('" + visitor.Name + "','" + visitor.Company + "','" + DateTime.Now.ToString("yyyyMMddHHmmss") + "',null,'" + visitor.Ip_Address + "');";
-            await DapperCon.ExecuteAsync(sql);
+            var parameters = new { FirstName = visitor.FirstName, visitor.LastName, Company = visitor.Company, visitor.Reason, Datetime = DateTime.Now.ToString("yyyyMMddHHmmss"),IP_ADDRESS = visitor.Ip_Address };
+            var sql = @"INSERT INTO VISITORS (FIRSTNAME, LASTNAME, COMPANY, CONTACTNUMBER, REASON, DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES (@FirstName,@LastName,@Company,@ContactNumber,@Reason,@Datetime_In,@Datetime_Out,@Ip_Address);";
+            await DapperCon.ExecuteAsync(sql,parameters);
         }
 
         public async void UpdateVisitor(int id)

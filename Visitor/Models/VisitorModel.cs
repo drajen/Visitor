@@ -9,8 +9,12 @@ namespace Visitor.Models
     public class VisitorModel
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Company { get; set; }
+        public string ContactNumber { get; set; }
+        public string Reason { get; set; }
+  
 
         public DateTime Datetime_In { get; set; }
         public DateTime? Datetime_Out { get; set; }
