@@ -53,14 +53,16 @@ namespace Visitor.Data
             return @"CREATE TABLE IF NOT EXISTS VISITORS
                       (
                          id                     INTEGER PRIMARY KEY,
-                         Name                   NVARCHAR(30),
+                         FirstName              NVARCHAR(30),
+                         LastName               NVARCHAR(30),
                          Company                NVARCHAR(30),
+                         ContactNumber          NVARCHAR(30),
+                         Reason                 NVARCHAR(500),
                          Datetime_In            DATE,
                          Datetime_Out           DATE,
-                         Ip_Address              NVARCHAR(10)
+                         Ip_Address             NVARCHAR(10)
                       );";
         }
-
         void SeedVisitors()
         {
             List<VisitorEntity> visitors = new List<VisitorEntity>()
