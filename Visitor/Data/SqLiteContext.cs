@@ -54,11 +54,14 @@ namespace Visitor.Data
             return @"CREATE TABLE IF NOT EXISTS VISITORS
                       (
                          id                     INTEGER PRIMARY KEY,
-                         Name                   NVARCHAR(30),
+                         FirstName              NVARCHAR(30),
+                         LastName               NVARCHAR(30),
                          Company                NVARCHAR(30),
+                         ContactNumber          NVARCHAR(30),
+                         Reason                 NVARCHAR(500),
                          Datetime_In            DATE,
                          Datetime_Out           DATE,
-                         Ip_Address              NVARCHAR(10)
+                         Ip_Address             NVARCHAR(10)
                       );";
         }
 
@@ -97,8 +100,11 @@ namespace Visitor.Data
                 new VisitorEntity()
                 {
                     Id = 1,
-                    Name = "Tester",
+                    FirstName = "Some",
+                    LastName = "Tester",
                     Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
                     Datetime_In = DateTime.Now,
                     Datetime_Out = null,
                     Ip_Address = "192.2.85.100"

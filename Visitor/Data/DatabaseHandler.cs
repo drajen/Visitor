@@ -46,8 +46,8 @@ namespace Visitor.Data
         }
 
         public async Task<bool> AddVisitor(VisitorModel visitor) {
-            var parameters = new { FirstName = visitor.Name, Company = visitor.Company, SignIn = DateTime.Now.ToString("yyyyMMddHHmmss"), IP=visitor.Ip_Address };
-            var sql = @"INSERT INTO VISITORS (NAME,COMPANY,DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES (@FirstName,@Company,@SignIn,null,@IP);";
+            var parameters = new { FirstName = visitor.FirstName, LastName = visitor.LastName, Company = visitor.Company, ContactNumber = visitor.ContactNumber, Reason = visitor.Reason, Datetime_In = DateTime.Now.ToString("yyyyMMddHHmmss"), IP_ADDRESS = visitor.Ip_Address };
+            var sql = @"INSERT INTO VISITORS (FIRSTNAME, LASTNAME, COMPANY, CONTACTNUMBER, REASON, DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES (@FirstName,@LastName,@Company,@ContactNumber,@Reason,@Datetime_In,null,@Ip_Address);";
             try {
                 await DapperCon.ExecuteAsync(sql, parameters);
                 return true;
@@ -69,13 +69,26 @@ namespace Visitor.Data
             
         }
 
-        public async Task<List<VisitorModel>> GetVisitorsForStore(int branchNumber)
+        public async Task<List<VisitorModel>> GetVisitorsForStore(string ip_address)
+        {
+            var parameters = new { ip_address = ip_address };
+            var sql = @"select * from VISITORS where Ip_Address = @ip_address;";
+            try {
+                return DapperCon.QueryAsync<VisitorModel>(sql, parameters).Result.ToList();
+            } catch {
+                throw;
+            }
+        }
+
+        public async Task<List<VisitorModel>> GetVisitorsForStoreByBranchNum(int branchNumber)
         {
             var parameters = new { branchNumber = branchNumber };
             var sql = @"select * from VISITORS where BRANCH_NUMBER = @branchNumber;";
-            IEnumerable<VisitorModel> VisitorList = await DapperCon.QueryAsync<VisitorModel>(sql);
-            List<VisitorModel> StoreVisitorList = VisitorList.ToList();
-            return StoreVisitorList;
+            try {
+                return DapperCon.QueryAsync<VisitorModel>(sql, parameters).Result.ToList();
+            } catch {
+                throw;
+            }
         }
 
         public void Dispose()

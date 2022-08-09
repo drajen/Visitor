@@ -28,7 +28,7 @@
                 @if (Visitors.Any()) {
                     @foreach (var visitor in Visitors) {
                         <tr>
-                            <td>@visitor.Name</td>
+                            <td>@visitor.FullName</td>
                             <td>@visitor.Company</td>
                             <td>@visitor.Datetime_In</td>
                             @if (visitor.IsSignedIn) {
@@ -57,13 +57,15 @@
     }
     private async Task RefreshVisitors()
     {
-        int? branchNumber = iptools.GetBranchId();
-        if (branchNumber != null)
-        Visitors = await DbHandler.GetVisitorsForStore(branchNumber.Value);
+        //int? branchNumber = iptools.GetBranchId();
+        //if (branchNumber != null)
+        //Visitors = await DbHandler.GetVisitorsForStoreByBranchNum(branchNumber.Value);
+
+        Visitors = await DbHandler.GetVisitorsForStore(iptools.GetIP());
     }
 
     private async Task SignOutVisitor(VisitorModel visitor) {
-        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.Name}'?"))
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.FullName}'?"))
             return;
 
         await DbHandler.UpdateVisitor(visitor.Id);
