@@ -2,6 +2,7 @@
 @using Visitor.Data
 @using Visitor.Models
 @inject DatabaseHandler DbHandler
+@inject NavigationManager NavManager
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor httpContextAccessor
 @using System.Net
@@ -52,11 +53,13 @@
             Dns.GetHostEntry(Dns.GetHostName()).AddressList[2].ToString();
         }
 
-        NewVisitor.Ip_Address = ip;
+        NewVisitor.Ip_Address = ip;     
+       
 
-        DbHandler.AddVisitor(NewVisitor);
-
-    }
+        bool result = await DbHandler.AddVisitor(NewVisitor);
+        if(result)
+            NavManager.NavigateTo("/signOut");
+ }
 
 
 }
