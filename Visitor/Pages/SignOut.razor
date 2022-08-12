@@ -17,22 +17,23 @@
                     <th>Company</th>
                     <th>DateTime In</th>
                     <th>DateTime Out</th>
-                    <th>Sign Out</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Visitors.Any())
-                {
-                    @foreach (var visitor in Visitors)
+                @if (Visitors.Any()){
+                    @foreach (var visitor in Visitors) {
+                <tr>
+                    <td>@visitor.FullName</td>
+                    <td>@visitor.Company</td>
+                    <td>@visitor.Datetime_In</td>
+                    @if (visitor.IsSignedIn) {
+                        <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor))">Sign Out</button></td>
+                    }
+                    else
                     {
-                        <tr>
-                            <td>@visitor.FirstName</td>
-                            <td>@visitor.Company</td>
-                            <td>@visitor.Datetime_In</td>
-                            <td>@visitor.Datetime_Out</td>
-                            <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor.Id))">Sign Out</button></td>
-
-                        </tr>
+                        <td>@visitor.Datetime_Out</td>
+                    }
+                </tr>
                     }
                 }
                 else
@@ -51,9 +52,9 @@
     List<VisitorModel> Visitors = new List<VisitorModel>();
     protected override async Task OnInitializedAsync()
     {
-        await RefreshProducts();
+        await RefreshVisitors();
     }
-    private async Task RefreshProducts()
+    private async Task RefreshVisitors()
     {
         string ip = httpContextAccessor.HttpContext.Connection?.RemoteIpAddress.ToString();
         if (ip == "::1")
@@ -65,10 +66,13 @@
         Visitors = await DbHandler.GetVisitorsForStore(ip);
     }
 
-    private async Task SignOutVisitor(int id)
+    private async Task SignOutVisitor(VisitorModel visitor)
     {
-        DbHandler.UpdateVisitor(id);
-        await RefreshProducts();
+        //if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.FullName}'?"))
+        //    return;
+
+        await DbHandler.UpdateVisitor(visitor.Id);
+        await RefreshVisitors();
     }
 
 

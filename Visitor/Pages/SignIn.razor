@@ -35,15 +35,19 @@
                 <input type="text" id="reason" class="form-control" @bind-value="@NewVisitor.Reason" />
             </div>
             <div class="text-center p-3 mb-3">
-                <button class="btn btn-info" @onclick="AddNewProduct"> Add Visitor</button>
+                <button class="btn btn-info" type="submit"> Add Visitor</button>
             </div>
         </EditForm>
+        @if (ErrorMessage != null && ErrorMessage.Length > 0) {
+            <div class="alert alert-danger" role="alert">@ErrorMessage</div>
+        }
     </div>
 </div>
 
 
 @code {
     public VisitorModel NewVisitor { get; set; } = new VisitorModel();
+    public string ErrorMessage { get; set; }
     private async Task AddNewProduct()
     {
         string ip = httpContextAccessor.HttpContext.Connection?.RemoteIpAddress.ToString();
@@ -53,13 +57,13 @@
             Dns.GetHostEntry(Dns.GetHostName()).AddressList[2].ToString();
         }
 
-        NewVisitor.Ip_Address = ip;     
-       
+        NewVisitor.Ip_Address = ip;
+
 
         bool result = await DbHandler.AddVisitor(NewVisitor);
         if(result)
             NavManager.NavigateTo("/signOut");
- }
+    }
 
 
 }

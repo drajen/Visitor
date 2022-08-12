@@ -53,10 +53,11 @@ namespace Visitor.Data
             return true;
         }
 
-        public async void UpdateVisitor(int id)
+        public async Task<bool> UpdateVisitor(int id)
         {
             var sql = @"UPDATE VISITORS SET DATETIME_OUT= '" + DateTime.Now.ToString("yyyyMMddHHmmss") + "' where id = " + id + ";";
             await DapperCon.ExecuteAsync(sql);
+            return true;
         }
 
         public async Task<List<VisitorModel>> GetVisitorsForStore(string ipAddress)
