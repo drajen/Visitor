@@ -52,7 +52,7 @@ namespace Visitor.Data
                 await DapperCon.ExecuteAsync(sql, parameters);
                 return true;
             } catch  {
-                throw;
+                return false;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Visitor.Data
                 await DapperCon.ExecuteAsync(sql, parameters);
                 return true;
             } catch {
-                throw;
+                return false;
             }
             
         }
