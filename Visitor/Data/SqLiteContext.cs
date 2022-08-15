@@ -132,6 +132,42 @@ namespace Visitor.Data
                     Datetime_In = DateTime.Now,
                     Datetime_Out = null,
                     Ip_Address = "192.0.1.100"
+                },
+                new VisitorEntity()
+                {
+                    Id = 4,
+                    FirstName = "Earlier",
+                    LastName = "Tester",
+                    Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
+                    Datetime_In = DateTime.Now.AddDays(-1),
+                    Datetime_Out = null,
+                    Ip_Address = "192.2.85.100"
+                },
+                new VisitorEntity()
+                {
+                    Id = 5,
+                    FirstName = "Another Early",
+                    LastName = "Tester",
+                    Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
+                    Datetime_In = DateTime.Now.AddDays(-1),
+                    Datetime_Out = null,
+                    Ip_Address = "192.2.85.100"
+                },
+                new VisitorEntity()
+                {
+                    Id = 6,
+                    FirstName = "Early Wishaw",
+                    LastName = "Tester",
+                    Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
+                    Datetime_In = DateTime.Now.AddDays(-1),
+                    Datetime_Out = null,
+                    Ip_Address = "192.0.1.100"
                 }
             };
             _database.InsertBulk(visitors);

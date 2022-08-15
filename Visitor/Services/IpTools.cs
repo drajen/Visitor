@@ -22,7 +22,7 @@ namespace Visitor.Services {
             }
             if (_hostEnvironment.IsDevelopment())
             {
-                ip = "192.02.85.100";
+                ip = "192.2.85.100";
             }
             return ip;
         }

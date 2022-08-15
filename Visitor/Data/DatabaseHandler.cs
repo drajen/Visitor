@@ -47,7 +47,7 @@ namespace Visitor.Data
         }
 
         public async Task<bool> AddVisitor(VisitorModel visitor) {
-            var parameters = new { FirstName = visitor.FirstName, LastName = visitor.LastName, Company = visitor.Company, ContactNumber = visitor.ContactNumber, Reason = visitor.Reason, Datetime_In = DateTime.Now.ToString("yyyyMMddHHmmss"), IP_ADDRESS = visitor.Ip_Address };
+            var parameters = new { FirstName = visitor.FirstName, LastName = visitor.LastName, Company = visitor.Company, ContactNumber = visitor.ContactNumber, Reason = visitor.Reason, Datetime_In = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), IP_ADDRESS = visitor.Ip_Address };
             var sql = @"INSERT INTO VISITORS (FIRSTNAME, LASTNAME, COMPANY, CONTACTNUMBER, REASON, DATETIME_IN, DATETIME_OUT, IP_ADDRESS) VALUES (@FirstName,@LastName,@Company,@ContactNumber,@Reason,@Datetime_In,null,@Ip_Address);";
             try {
                 await DapperCon.ExecuteAsync(sql, parameters);
@@ -59,7 +59,7 @@ namespace Visitor.Data
 
         public async Task<bool> UpdateVisitor(int id)
         {
-            var parameters = new { id = id, signOut = DateTime.Now.ToString("yyyyMMddHHmmss") };
+            var parameters = new { id = id, signOut = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") };
             var sql = @"UPDATE VISITORS SET DATETIME_OUT=@signOut where id = @id;";
             try {
                 await DapperCon.ExecuteAsync(sql, parameters);
@@ -74,8 +74,8 @@ namespace Visitor.Data
         {
             if (date == null)
                 date = DateTime.Now;
-            var parameters = new { ip = ipAddress, dateString = date.Value.ToString("yyyy-MM-dd") };
-            var sql = @"select * from VISITORS where IP_ADDRESS = '@ip' where DATETIME_IN between '@dateStringT00:00:00' and '@dateStringT23:59:59';";
+            var parameters = new { ip = ipAddress, startDate = $"{date.Value.ToString("yyyy-MM-dd")} 00:00:00", endDate = $"{date.Value.ToString("yyyy-MM-dd")} 23:59:59" };
+            var sql = @"select * from VISITORS where IP_ADDRESS = @ip and DATETIME_IN between @startDate and @endDate;";
             try {
                 return DapperCon.QueryAsync<VisitorModel>(sql, parameters).Result.ToList();
             } catch {

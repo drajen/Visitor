@@ -14,13 +14,18 @@
 <h3>Admin</h3>
 
 <div class="container">
-    <div>
-        <select class="form-control selectpicker" @onchange="RefreshVisitors">
-            <option>--Select Branch--</option>
-            @foreach (var item in Branches){
-            <option value="@item.Number">@item.Name</option>
-            }
-        </select>
+    <div class="row">
+        <div>
+            <select class="form-control selectpicker" @onchange="SetBranch">
+                <option value="null">--Select Branch--</option>
+                @foreach (var item in Branches){
+                <option value="@item.Number">@item.Name</option>
+                }
+            </select>
+        </div>
+        <div>
+            <input type="date" class="form-control" value="@SelectedDate.ToString("yyyy-MM-dd")" @onchange="SetDate" />
+        </div>
     </div>
     <div class="row bg-light">
         <table class="table table-bordered">
@@ -50,12 +55,11 @@
     </div>
 </div>
 
-
-
-
 @code {
     List<BranchModel> Branches = new List<BranchModel>();
     List<VisitorModel> Visitors = new List<VisitorModel>();
+    public DateTime SelectedDate = DateTime.Now;
+    public int BranchNumber;
 
     protected override async Task OnInitializedAsync() {
         await GetBranches();
@@ -65,10 +69,20 @@
         Branches = await DbHandler.GetBranches();
     }
 
-    private async Task RefreshVisitors(ChangeEventArgs e) {
-        if (e.Value != null) {
-            var branchNum = int.Parse(e.Value.ToString());
-            Visitors = await DbHandler.GetVisitorsForStoreByBranchNum(branchNum);
-        }
+    public async Task SetDate(ChangeEventArgs e) {
+        var success = DateTime.TryParse((String)e.Value, out SelectedDate);
+        if(success)
+            await RefreshVisitors();
+    }
+
+    public async Task SetBranch(ChangeEventArgs e) {
+//          if (e.Value != null)
+        var success = int.TryParse(e.Value.ToString(), out BranchNumber);
+        if(success)
+            await RefreshVisitors();
+    }
+
+    public async Task RefreshVisitors() {
+        Visitors = await DbHandler.GetVisitorsForStoreByBranchNum(BranchNumber, SelectedDate);
     }
 }
