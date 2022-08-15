@@ -2,6 +2,7 @@
 @inject DatabaseHandler DbHandler
 @inject IIpTools iptools
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
 
 @using System.Net
 @using System.Net.Sockets
@@ -14,6 +15,8 @@
 <h3>Admin</h3>
 
 <div class="container">
+    <AuthorizeView>
+        <Authorized>
     <div class="row">
         <div>
             <select class="form-control selectpicker" @onchange="SetBranch">
@@ -25,6 +28,9 @@
         </div>
         <div>
             <input type="date" class="form-control" value="@SelectedDate.ToString("yyyy-MM-dd")" @onchange="SetDate" />
+        </div>
+        <div>
+            <a class="form-control" href="/Logout">Log Out</a>
         </div>
     </div>
     <div class="row bg-light">
@@ -53,6 +59,11 @@
             </tbody>
         </table>
     </div>
+        </Authorized>
+        <NotAuthorized>
+        <LoginControl />
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
 
 @code {
@@ -76,7 +87,6 @@
     }
 
     public async Task SetBranch(ChangeEventArgs e) {
-//          if (e.Value != null)
         var success = int.TryParse(e.Value.ToString(), out BranchNumber);
         if(success)
             await RefreshVisitors();
