@@ -41,5 +41,11 @@ namespace Visitor.Services {
 
             return (bytes[1] * 100) + bytes[2];
         }
+
+        public string GetIPFromBranchId(int branchId) {
+            var firstOctet = branchId % 100;
+            var secondOctet = branchId - (firstOctet * 100);
+            return $"192.{firstOctet.ToString().PadLeft(2, '0')}.{secondOctet.ToString().PadLeft(2, '0')}.*";
+        }
     }
 }

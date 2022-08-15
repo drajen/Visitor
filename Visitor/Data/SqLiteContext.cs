@@ -68,7 +68,7 @@ namespace Visitor.Data
         public static string CreateBranchTableQuery() {
             return @"CREATE TABLE IF NOT EXISTS REF_BRANCH
                       (
-                        BRANCH_NUMBER           INTEGER PRIMARY KEY,
+                        BRANCH_NUMBER           INTEGER,
                         BRANCH_NAME             NVARCHAR(20),
                         COMPANY_NUMBER          INTEGER,
                         STOCK_COMPANY_NUMBER    INTEGER,
@@ -108,6 +108,30 @@ namespace Visitor.Data
                     Datetime_In = DateTime.Now,
                     Datetime_Out = null,
                     Ip_Address = "192.2.85.100"
+                },
+                new VisitorEntity()
+                {
+                    Id = 2,
+                    FirstName = "Another",
+                    LastName = "Tester",
+                    Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
+                    Datetime_In = DateTime.Now,
+                    Datetime_Out = null,
+                    Ip_Address = "192.2.85.100"
+                },
+                new VisitorEntity()
+                {
+                    Id = 3,
+                    FirstName = "Wishaw",
+                    LastName = "Tester",
+                    Company = "M&Co",
+                    ContactNumber = "12345",
+                    Reason = "Testing",
+                    Datetime_In = DateTime.Now,
+                    Datetime_Out = null,
+                    Ip_Address = "192.0.1.100"
                 }
             };
             _database.InsertBulk(visitors);
@@ -116,6 +140,31 @@ namespace Visitor.Data
         {
             List<BranchEntity> branches = new List<BranchEntity>()
             {
+                new BranchEntity()
+                {
+                    Branch_Number = 1,
+                    Branch_Name = "WISHAW",
+                    Company_Number = 1,
+                    Stock_Company_Number = 1,
+                    Area_Code = "22",
+                    Branch_Address_1 = "62 MAIN STREET",
+                    Branch_Address_2 = "WISHAW",
+                    Branch_Address_3 = "LANARKSHIRE",
+                    Branch_Address_4 = "ML2 7AB",
+                    Branch_Status = 'O',
+                    Effective_Date = DateTime.Parse("08-JAN-82"),
+                    Manager_Name = "",
+                    Telephone_Number = "01698359096",
+                    Number_Of_Tills = 3,
+                    Epos_Software_Release = 3,
+                    Wage_Cost = 300,
+                    Staff_Discount_Pcent = 30,
+                    Commission_Rate = "B",
+                    Branch_Type_Id = 0,
+                    Country_Code = "GB",
+                    Market_Type_Id = 1,
+                    Number_Of_Mobile_Tills =1
+                },
                 new BranchEntity()
                 {
                     Branch_Number = 285,

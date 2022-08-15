@@ -1,0 +1,74 @@
+﻿@page "/admin"
+@inject DatabaseHandler DbHandler
+@inject IIpTools iptools
+@inject IJSRuntime JSRuntime
+
+@using System.Net
+@using System.Net.Sockets
+@using Microsoft.AspNetCore.Http
+
+@using Visitor.Data
+@using Visitor.Models
+@using Visitor.Services
+
+<h3>Admin</h3>
+
+<div class="container">
+    <div>
+        <select class="form-control selectpicker" @onchange="RefreshVisitors">
+            <option>--Select Branch--</option>
+            @foreach (var item in Branches){
+            <option value="@item.Number">@item.Name</option>
+            }
+        </select>
+    </div>
+    <div class="row bg-light">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>DateTime In</th>
+                    <th>DateTime Out</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Visitors.Any()) {
+                    @foreach (var visitor in Visitors) {
+                        <tr>
+                            <td>@visitor.FullName</td>
+                            <td>@visitor.Company</td>
+                            <td>@visitor.Datetime_In</td>
+                            <td>@visitor.Datetime_Out</td>
+                        </tr>
+                    }
+                } else {
+                    <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@code {
+    List<BranchModel> Branches = new List<BranchModel>();
+    List<VisitorModel> Visitors = new List<VisitorModel>();
+
+    protected override async Task OnInitializedAsync() {
+        await GetBranches();
+    }
+
+    private async Task GetBranches() {
+        Branches = await DbHandler.GetBranches();
+    }
+
+    private async Task RefreshVisitors(ChangeEventArgs e) {
+        if (e.Value != null) {
+            var branchNum = int.Parse(e.Value.ToString());
+            Visitors = await DbHandler.GetVisitorsForStoreByBranchNum(branchNum);
+        }
+    }
+}

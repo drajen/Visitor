@@ -2,7 +2,7 @@
 using NPoco;
 
 namespace Visitor.Entities {
-    [TableName("REF_BRANCH"), PrimaryKey("BRANCH_NUMBER")]
+    [TableName("REF_BRANCH")]
     public class BranchEntity {
 
         [Column("BRANCH_NUMBER")] 

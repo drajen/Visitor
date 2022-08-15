@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using Visitor.Entities;
 using Visitor.Models;
 
 namespace Visitor.Data
@@ -69,10 +70,12 @@ namespace Visitor.Data
             
         }
 
-        public async Task<List<VisitorModel>> GetVisitorsForStore(string ip_address)
+        public async Task<List<VisitorModel>> GetVisitorsForStore(string ipAddress, DateTime? date = null)
         {
-            var parameters = new { ip_address = ip_address };
-            var sql = @"select * from VISITORS where Ip_Address = @ip_address;";
+            if (date == null)
+                date = DateTime.Now;
+            var parameters = new { ip = ipAddress, dateString = date.Value.ToString("yyyy-MM-dd") };
+            var sql = @"select * from VISITORS where IP_ADDRESS = '@ip' where DATETIME_IN between '@dateStringT00:00:00' and '@dateStringT23:59:59';";
             try {
                 return DapperCon.QueryAsync<VisitorModel>(sql, parameters).Result.ToList();
             } catch {
@@ -80,20 +83,37 @@ namespace Visitor.Data
             }
         }
 
-        public async Task<List<VisitorModel>> GetVisitorsForStoreByBranchNum(int branchNumber)
-        {
-            var parameters = new { branchNumber = branchNumber };
-            var sql = @"select * from VISITORS where BRANCH_NUMBER = @branchNumber;";
+        public async Task<List<VisitorModel>> GetVisitorsForStoreByBranchNum(int branchNumber, DateTime? date = null) {
+
+            if (date == null)
+                date = DateTime.Now;
+            var secondOctet = branchNumber % 100;
+            var firstOctet = (branchNumber - secondOctet) / 100;
+            var ipString = $"192.{firstOctet}.{secondOctet}.%";
+            var parameters = new { ipString = ipString, startDate = $"{date.Value.ToString("yyyy-MM-dd")} 00:00:00", endDate = $"{date.Value.ToString("yyyy-MM-dd")} 23:59:59" };
+            var sql = @"select * from VISITORS where IP_ADDRESS like @ipString and DATETIME_IN between @startDate and @endDate;";
+
             try {
                 return DapperCon.QueryAsync<VisitorModel>(sql, parameters).Result.ToList();
+            } catch (Exception ex) {
+                throw ex;
+            }
+        }
+
+        public async Task<List<BranchModel>> GetBranches()
+        {
+            var sql = @"select * from REF_BRANCH order by BRANCH_NAME";
+            try {
+                return DapperCon.QueryAsync<BranchEntity>(sql).Result
+                    .Select(x => new BranchModel { Number = x.Branch_Number, Name = x.Branch_Name })
+                    .ToList();
             } catch {
                 throw;
             }
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+        public void Dispose() {
+            DapperCon.Dispose();
         }
     }
 }
