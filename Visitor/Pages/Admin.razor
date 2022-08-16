@@ -73,10 +73,6 @@
     public int BranchNumber;
 
     protected override async Task OnInitializedAsync() {
-        await GetBranches();
-    }
-
-    private async Task GetBranches() {
         Branches = await DbHandler.GetBranches();
     }
 
