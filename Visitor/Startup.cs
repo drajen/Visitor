@@ -13,6 +13,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Visitor.Data;
+using Visitor.Services;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 
 namespace Visitor
 {
@@ -31,9 +36,19 @@ namespace Visitor
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+            services.AddAuthentication(
+                CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpContextAccessor();
+            services.AddHttpClient();
+            services.AddScoped<HttpClient>();
 
             if (HostEnvironment.IsDevelopment())
             {
@@ -50,7 +65,7 @@ namespace Visitor
                 {
                     return new SqLiteContext(testDbDataSource);
                 });
-                  
+
             }
             else
             {
@@ -63,6 +78,7 @@ namespace Visitor
                     services.AddScoped<IUnitOfWork, UnitOfWork>();*/
             }
             services.AddSingleton<DatabaseHandler>();
+            services.AddScoped<IIpTools, IpTools>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,7 +97,8 @@ namespace Visitor
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

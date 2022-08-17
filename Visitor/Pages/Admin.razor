@@ -1,0 +1,103 @@
+﻿@page "/admin"
+@inject DatabaseHandler DbHandler
+@inject IIpTools iptools
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+
+@using System.Net
+@using System.Net.Sockets
+@using Microsoft.AspNetCore.Http
+
+@using Visitor.Data
+@using Visitor.Models
+@using Visitor.Services
+
+<h3>Admin</h3>
+
+<div class="container">
+    <AuthorizeView>
+        <Authorized>
+            <div class="row">
+                <div>
+                    <select class="form-control selectpicker" @onchange="SetBranch">
+                        <option value="null">--Select Branch--</option>
+                        @foreach (var item in Branches)
+                        {
+                            <option value="@item.Number">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <input type="date" class="form-control" value="@SelectedDate.ToString("yyyy-MM-dd")" @onchange="SetDate" />
+                </div>
+                <div>
+                    <a class="form-control" href="/Logout">Log Out</a>
+                </div>
+            </div>
+            <div class="row bg-light">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>DateTime In</th>
+                            <th>DateTime Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Visitors.Any())
+                        {
+                            @foreach (var visitor in Visitors)
+                            {
+                                <tr>
+                                    <td>@visitor.FullName</td>
+                                    <td>@visitor.Company</td>
+                                    <td>@visitor.Datetime_In</td>
+                                    <td>@visitor.Datetime_Out</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <LoginControl />
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    List<BranchModel>
+    Branches = new List<BranchModel>
+        ();
+        List<VisitorModel>
+            Visitors = new List<VisitorModel>
+                ();
+                public DateTime SelectedDate = DateTime.Now;
+                public int BranchNumber;
+
+                protected override async Task OnInitializedAsync() {
+                Branches = await DbHandler.GetBranches();
+                }
+
+                public async Task SetDate(ChangeEventArgs e) {
+                var success = DateTime.TryParse((String)e.Value, out SelectedDate);
+                if(success)
+                await RefreshVisitors();
+                }
+
+                public async Task SetBranch(ChangeEventArgs e) {
+                var success = int.TryParse(e.Value.ToString(), out BranchNumber);
+                if(success)
+                await RefreshVisitors();
+                }
+
+                public async Task RefreshVisitors() {
+                Visitors = await DbHandler.GetVisitorsForStoreByBranchNum(BranchNumber, SelectedDate);
+                }
+                }
