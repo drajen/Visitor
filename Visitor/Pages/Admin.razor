@@ -14,6 +14,7 @@
 <h3>Admin</h3>
 
 <div class="container">
+    <CascadingAuthenticationState>
     <AuthorizeView>
         <Authorized>
             <div class="row">
@@ -68,6 +69,7 @@
             <LoginControl />
         </NotAuthorized>
     </AuthorizeView>
+    </CascadingAuthenticationState>
 </div>
 
 @code {
