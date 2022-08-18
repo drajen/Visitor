@@ -48,3 +48,33 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.logoBanner {
+    background-color: #000;
+    height:200px;
+}
+.logoBanner img {
+    position: absolute;
+    right:50px;
+}
+.homepageBox {
+    width: 400px;
+    margin-top: 100px;
+    text-align: center
+}
+.padRight {
+    margin-right: 20px
+}
+.bg-black {
+    background-color: #000;
+}
+.visitorTable{
+    min-width:800px;
+}
+.floatRight {
+    float:right;
+}
+.timeColumn {
+    width: 120px;
+    text-align: center
+}

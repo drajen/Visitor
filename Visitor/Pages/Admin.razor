@@ -11,65 +11,70 @@
 @using Visitor.Data
 @using Visitor.Models
 
-<h3>Admin</h3>
 
-<div class="container">
-    <CascadingAuthenticationState>
-    <AuthorizeView>
-        <Authorized>
-            <div class="row">
-                <div>
-                    <select class="form-control selectpicker" @onchange="SetBranch">
-                        <option value="null">--Select Branch--</option>
-                        @foreach (var item in Branches)
-                        {
-                            <option value="@item.Number">@item.Name</option>
-                        }
-                    </select>
-                </div>
-                <div>
-                    <input type="date" class="form-control" value="@SelectedDate.ToString("yyyy-MM-dd")" @onchange="SetDate" />
-                </div>
-                <div>
-                    <a class="form-control" href="/Logout">Log Out</a>
-                </div>
-            </div>
-            <div class="row bg-light">
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Name</th>
-                            <th>Company</th>
-                            <th>DateTime In</th>
-                            <th>DateTime Out</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Visitors.Any())
-                        {
-                            @foreach (var visitor in Visitors)
+
+<div class="d-flex justify-content-center">
+    <div>
+        <h3>Visitorbook Admin</h3>
+        <CascadingAuthenticationState>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <select class="form-control selectpicker" @onchange="SetBranch">
+                                <option value="null">--Select Branch--</option>
+                                @foreach (var item in Branches)
+                                {
+                                    <option value="@item.Number">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" value="@SelectedDate.ToString("yyyy-MM-dd")" @onchange="SetDate" />
+                        </div>
+                        <div>
+                            <a class="btn btn-warning" href="/Logout">Log Out</a>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-striped visitorTable" style="margin-top:10px">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Reason</th>
+                                <th class="timeColumn">Sign In</th>
+                                <th class="timeColumn">Sign Out</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Visitors.Any())
                             {
-                                <tr>
-                                    <td>@visitor.FullName</td>
-                                    <td>@visitor.Company</td>
-                                    <td>@visitor.Datetime_In</td>
-                                    <td>@visitor.Datetime_Out</td>
-                                </tr>
+                                @foreach (var visitor in Visitors)
+                                {
+                                    <tr>
+                                        <td>@visitor.FullName</td>
+                                        <td>@visitor.Company</td>
+                                        <td>@visitor.Reason</td>
+                                        <td class="timeColumn">@visitor.Datetime_In.ToShortTimeString()</td>
+                                        <td class="timeColumn">@visitor.Datetime_Out.GetValueOrDefault().ToShortTimeString()</td>
+                                    </tr>
+                                }
                             }
-                        }
-                        else
-                        {
-                            <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </Authorized>
-        <NotAuthorized>
-            <LoginControl />
-        </NotAuthorized>
-    </AuthorizeView>
-    </CascadingAuthenticationState>
+                            else
+                            {
+                                <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </Authorized>
+                <NotAuthorized>
+                    <LoginControl />
+                </NotAuthorized>
+            </AuthorizeView>
+        </CascadingAuthenticationState>
+    </div>
 </div>
 
 @code {

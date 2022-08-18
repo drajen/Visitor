@@ -13,7 +13,7 @@ namespace Visitor.Pages
         {
             // Clear the existing external cookie
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return LocalRedirect("/");
+            return LocalRedirect("/admin");
         }
     }
 }

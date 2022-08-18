@@ -1,13 +1,20 @@
 ﻿@page "/"
 @inject NavigationManager NavManager
 
-<h1>Visitor</h1>
 
-Welcome to the visitor sign in app.
 
-<button class="btn btn-primary" @onclick="SignInScreen">Sign In</button>
-<button class="btn btn-primary" @onclick="SignOutScreen">Sign Out</button>
 
+<div class="d-flex justify-content-center">
+    <div class="homepageBox">
+        <h1>Visitorbook</h1>
+        <p>Welcome to the visitor sign in app.<br />Click on one of the buttons below to continue.</p>
+        <div>
+            <button class="btn btn-success padRight" @onclick="SignInScreen">Sign In</button>
+            <button class="btn btn-danger" @onclick="SignOutScreen">Sign Out</button>
+        </div>
+    </div>
+    
+</div>
 @code {
     private int currentCount = 0;
 

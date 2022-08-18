@@ -4,48 +4,53 @@
 @inject DatabaseHandler DbHandler
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor httpContextAccessor
+@inject IJSRuntime jsRuntime
 @using System.Net
-
-<h3>Sign Out</h3>
+@inject NavigationManager NavManager
 
 <div class="container">
-    <div class="row bg-light">
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Company</th>
-                    <th>DateTime In</th>
-                    <th>DateTime Out</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Visitors.Any()){
-                    @foreach (var visitor in Visitors) {
-                <tr>
-                    <td>@visitor.FullName</td>
-                    <td>@visitor.Company</td>
-                    <td>@visitor.Datetime_In</td>
-                    @if (visitor.IsSignedIn) {
-                        <td><button class="btn btn-primary" @onclick="(() => SignOutVisitor(visitor))">Sign Out</button></td>
+
+    <div class="d-flex justify-content-center">
+        <div>
+            <h3 class="text-center">@DateTime.Now.ToShortDateString() Visitors</h3>
+
+            <table class="table table-bordered table-striped visitorTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th class="timeColumn">Sign In</th>
+                        <th class="timeColumn">Sign Out</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Visitors.Any()){
+                        @foreach (var visitor in Visitors) {
+                    <tr>
+                        <td>@visitor.FullName</td>
+                        <td>@visitor.Company</td>
+                        <td class="timeColumn">@visitor.Datetime_In.ToShortTimeString()</td>
+                        @if (visitor.IsSignedIn) {
+                            <td class="timeColumn"><button class="btn btn-info floatRight" @onclick="(() => SignOutVisitor(visitor))">Sign Out</button></td>
+                        }
+                        else
+                        {
+                            <td class="timeColumn">@visitor.Datetime_Out.Value.ToShortTimeString()</td>
+                        }
+                    </tr>
+                        }
                     }
                     else
                     {
-                        <td>@visitor.Datetime_Out</td>
+                        <tr><td colspan="4"><strong>No Visitors Today</strong></td></tr>
                     }
-                </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="6"><strong>No Visitors available</strong></td></tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+
+            <button class="btn btn-warning floatRight" type="button" @onclick="ReturnToHome">&larr; Go Back</button> 
+        </div>
     </div>
 </div>
-
-
 
 
 @code {
@@ -66,15 +71,16 @@
         Visitors = await DbHandler.GetVisitorsForStore(ip);
     }
 
-    private async Task SignOutVisitor(VisitorModel visitor)
-    {
-        //if (!await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.FullName}'?"))
-        //    return;
+    private async Task SignOutVisitor(VisitorModel visitor) {
+        if (!await jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to sign out '{visitor.FullName}'?"))
+            return;
 
         await DbHandler.UpdateVisitor(visitor.Id);
         await RefreshVisitors();
     }
 
-
+    private void ReturnToHome() {
+        NavManager.NavigateTo("/");
+    }
 
 }

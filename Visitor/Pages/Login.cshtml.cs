@@ -27,7 +27,7 @@ namespace Visitor.Pages
             catch { }
 
             // This is where you will validate the user
-            if (paramUsername == "admin" && paramPassword == "password1234")
+            if (paramUsername == "admin" && paramPassword == "password")
             {
                 var claims = new List<Claim> {
                     new Claim(ClaimTypes.Name, paramUsername),
@@ -53,7 +53,7 @@ namespace Visitor.Pages
                 }
                 return LocalRedirect(returnUrl);
             }
-            return LocalRedirect(Url.Content("~/"));
+            return LocalRedirect(returnUrl);
         }
     }
 }
